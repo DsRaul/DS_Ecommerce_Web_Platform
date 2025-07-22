@@ -224,12 +224,12 @@ if not st.session_state.usuario:
         st.markdown(f"""
         <div class="main-container">
             <div class="login-card">
-                <div class="brand-logo">FASHION STORE</div>
-                <div class="brand-subtitle">Luxury Fashion</div>
+                <div class="brand-logo">KHARMA STORE</div>
+                <div class="brand-subtitle">Vintage Fashion</div>
                 <div class="decoration-line"></div>
                 <div class="welcome-message">
-                    Welcome to the world of exclusive fashion.<br>
-                    Sign in to discover your style.
+                    Welcome to the world of exclusive style.<br>
+                    Sign in to discover your History.
                 </div>
                 """
                 + google_login_button() +
