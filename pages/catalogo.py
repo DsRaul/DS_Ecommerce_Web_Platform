@@ -183,7 +183,7 @@ def create_checkout_session(items, user_email):
     
     except Exception as e:
         st.error(f"Error al crear sesión de pago: {str(e)}")
-        return None
+        return None, None
 
 # Función para guardar carrito en Firestore
 def save_cart_to_firestore(session_id, user_id, cart_items):
@@ -204,7 +204,7 @@ def save_cart_to_firestore(session_id, user_id, cart_items):
         st.error(f"Error al guardar carrito: {str(e)}")
 
 # --- LÓGICA PRINCIPAL DE LA PÁGINA ---
-st.markdown('<div class="main-header"><h1>🛍️ Fashion Store</h1><p>Bienvenido/a a tu tienda de moda</p></div>', unsafe_allow_html=True)
+st.markdown('<div class="main-header"><h1>🛍️ kharma Store</h1><p>Bienvenido/a a tu tienda de moda</p></div>', unsafe_allow_html=True)
 
 # Sidebar con información del usuario y carrito
 with st.sidebar:
@@ -220,13 +220,27 @@ with st.sidebar:
     st.markdown("### 🛒 Carrito")
     if st.session_state.cart:
         total = 0
-        for item in st.session_state.cart:
-            st.markdown(f"""
-            <div class="cart-item">
-                <strong>{item['name']}</strong><br>
-                ${item['price']:.2f} x {item['quantity']}
-            </div>
-            """, unsafe_allow_html=True)
+        for i, item in enumerate(st.session_state.cart):
+            col1, col2, col3, col4 = st.columns([4, 1, 1, 1])
+            
+            with col1:
+                st.markdown(f"**{item['name']}** - ${item['price']:.2f}")
+                st.markdown(f"Cantidad: {item['quantity']}")
+
+            with col2:
+                if st.button("➕", key=f"plus_{i}"):
+                    st.session_state.cart[i]['quantity'] += 1
+
+            with col3:
+                if item['quantity'] > 1:
+                    if st.button("➖", key=f"minus_{i}"):
+                        st.session_state.cart[i]['quantity'] -= 1
+
+            with col4:
+                if st.button("❌", key=f"remove_{i}"):
+                    st.session_state.cart.pop(i)
+                    break
+
             total += item['price'] * item['quantity']
         
         st.markdown(f"**Total: ${total:.2f}**")
@@ -234,14 +248,21 @@ with st.sidebar:
         if st.button("💳 Proceder al Pago", key="checkout"):
             checkout_url, session_id = create_checkout_session(st.session_state.cart, st.session_state['usuario']['email'])
             if checkout_url and session_id:
-                # Guardar datos críticos en la base de datos antes de redirigir
                 save_cart_to_firestore(session_id, st.session_state['usuario']['uid'], st.session_state.cart)
-                
-                # Usar link_button para abrir en la misma ventana
                 st.link_button("🔗 Ir a Stripe Checkout", checkout_url)
                 st.success("¡Sesión de pago creada! Haz clic en el botón para continuar.")
+
+        # 🔄 Actualiza Firestore automáticamente al final
+        def update_cart_in_firestore():
+            session_id = st.session_state['usuario']['uid']
+            cart_ref = st.session_state.db.collection('carts').document(session_id)
+            cart_ref.set({'items': st.session_state.cart})
+
+        update_cart_in_firestore()
+
     else:
         st.info("Tu carrito está vacío")
+
 
 # Contenido principal - Catálogo de productos
 st.markdown("## 🛍️ Catálogo de Productos")
@@ -303,7 +324,18 @@ else:
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; padding: 2rem;">
-    <p>🛍️ Fashion Store - Tu estilo, nuestra pasión</p>
+    <p>🛍️ Kharma Store - Tu estilo, nuestra pasión</p>
     <p>Desarrollado con ❤️ usando Streamlit, Firebase y Stripe</p>
 </div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        button[kind="secondary"] {
+            font-size: 0.75rem !important;
+            padding: 0.15rem 0.4rem !important;
+            border-radius: 8px !important;
+            min-width: 28px !important;
+        }
+    </style>
 """, unsafe_allow_html=True)
