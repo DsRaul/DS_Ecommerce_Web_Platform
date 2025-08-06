@@ -9,7 +9,7 @@ if 'login' not in st.session_state:
     st.switch_page('app.py')
 
 # Configuración de Stripe
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+stripe.api_key = st.secrets["STRIPE_SECRET_KEY"]
 
 # CSS personalizado para el diseño de lujo
 with open("estilos/css_compra.html", "r") as file:
