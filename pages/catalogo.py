@@ -170,8 +170,8 @@ def create_checkout_session(items, user_email):
             payment_method_types=['card'],
             line_items=line_items,
             mode='payment',
-            success_url='http://localhost:8501?payment=success&session_id={CHECKOUT_SESSION_ID}',
-            cancel_url='http://localhost:8501?payment=cancelled',
+            success_url='https://kharma-store.streamlit.app?payment=success&session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://kharma-store.streamlit.app?payment=cancelled',
             customer_email=user_email,
             metadata={
                 'user_id': st.session_state['usuario']['uid'],
