@@ -19,22 +19,22 @@ st.markdown(html_content, unsafe_allow_html=True)
 # Se ejecuta una única vez cuando carga la aplicación
 if 'has_run' not in st.session_state:
     st.session_state.has_run = True
-    service_account_key_path = 'serviceAccountKey.json'
+    service_account_key_path = st.secrets["google_service_account"]
     collection_name = "usuarios"
-    # st.session_state.redirect_uri = "https://kharma-store.streamlit.app"
-    st.session_state.redirect_uri = "http://localhost:8501"
+    st.session_state.redirect_uri = "https://kharma-store.streamlit.app"
 
     # --- Inicialización de Firebase ADMIN SDK ---
     if not firebase_admin._apps:
-        cred = credentials.Certificate(service_account_key_path)
+        service_account_dict = dict(service_account_key_path)
+        cred = credentials.Certificate(service_account_dict)
         firebase_admin.initialize_app(cred)
     st.session_state.db = firestore.client()
 
     # Inicia el Cliente de Google
-    st.session_state.google_client_id = os.environ.get("GOOGLE_CLIENT_ID")
-    st.session_state.google_client_secret = os.environ.get("GOOGLE_SECRET_ID")
-    # st.session_state.google_client_id = st.secrets["GOOGLE_CLIENT_ID"]
-    # st.session_state.google_client_secret = st.secrets["GOOGLE_SECRET_ID"]
+    # st.session_state.google_client_id = os.environ.get("GOOGLE_CLIENT_ID")
+    # st.session_state.google_client_secret = os.environ.get("GOOGLE_SECRET_ID")
+    st.session_state.google_client_id = st.secrets["GOOGLE_CLIENT_ID"]
+    st.session_state.google_client_secret = st.secrets["GOOGLE_SECRET_ID"]
 
 
     #Inicializa el carrito de compras
@@ -166,7 +166,7 @@ def google_login_button():
     """
 
     button_html = f"""<button class="google-login-btn">{google_svg}Continue with Google</button>"""
-    return f"""<a href="{google_auth()}" target="_self" style="text-decoration: none;">{button_html}</a>"""
+    return f"""<a href="{google_auth()}" target="_blank" style="text-decoration: none;">{button_html}</a>"""
 
 # Función para recuperar el usuario basado en session_id
 def get_user_from_firestore(session_id):
