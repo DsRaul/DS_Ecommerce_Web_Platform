@@ -3,7 +3,7 @@
 Una aplicación de e-commerce moderna y elegante desarrollada con Streamlit, que ofrece una experiencia de compra premium con autenticación OAuth, gestión de carrito y procesamiento de pagos seguro.
 
 Interactúa con el proyecto desplegado aquí:
-https://xperience-ecommerce.streamlit.app/
+https://kharma-store.streamlit.app
 
 Revisa el tutorial sobre Firestore aquí:
 https://claude.ai/public/artifacts/cc1ce94b-cf43-47d0-b0de-4cf81832b847
